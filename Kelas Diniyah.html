@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Diniyah Course Manager + Referensi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f4f8;
+            color: #1a202c;
+            padding: 20px;
+        }
+        .container { max-width:1400px; margin:0 auto; }
+        .header {
+            background: linear-gradient(135deg, #1a3a4a, #2d5a6d);
+            color:#fff;
+            padding:24px 32px;
+            border-radius:16px;
+            margin-bottom:28px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            flex-wrap:wrap;
+            gap:16px;
+            box-shadow:0 8px 24px rgba(0,0,0,0.15);
+        }
+        .header h1 { font-size:26px; font-weight:700; letter-spacing:0.5px; }
+        .header h1 i { margin-right:12px; color:#f6c445; }
+        .header .subtitle { font-size:14px; opacity:0.85; font-weight:300; margin-top:4px; }
+        .header-actions { display:flex; gap:12px; align-items:center; }
+        .btn-reset {
+            background: rgba(255,255,255,0.15);
+            border: none;
+            color: #fff;
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-reset:hover { background: rgba(255,255,255,0.3); }
+        .header-badge {
+            background: rgba(255,255,255,0.15);
+            padding:8px 18px;
+            border-radius:30px;
+            font-size:13px;
+            font-weight:500;
+            display:flex;
+            align-items:center;
+            gap:8px;
+        }
+        .header-badge i { color:#f6c445; }
+        .stats {
+            display:grid;
+            grid-template-columns:repeat(auto-fit, minmax(140px,1fr));
+            gap:14px;
+            margin-bottom:28px;
+        }
+        .stat-card {
+            background:#fff;
+            padding:16px 18px;
+            border-radius:12px;
+            box-shadow:0 2px 8px rgba(0,0,0,0.06);
+            display:flex;
+            align-items:center;
+            gap:14px;
+            border-left:4px solid #2d5a6d;
+        }
+        .stat-card .icon { font-size:28px; color:#2d5a6d; width:44px; text-align:center; }
+        .stat-card .info .number { font-size:22px; font-weight:700; color:#1a3a4a; }
+        .stat-card .info .label { font-size:12px; color:#718096; font-weight:500; text-transform:uppercase; letter-spacing:0.3px; }
+        .main-grid {
+            display:grid;
+            grid-template-columns:1fr 340px;
+            gap:28px;
+        }
+        @media (max-width:992px) { .main-grid { grid-template-columns:1fr; } }
+        .panel {
+            background:#fff;
+            border-radius:16px;
+            padding:24px;
+            box-shadow:0 4px 16px rgba(0,0,0,0.06);
+        }
+        .panel-title {
+            font-size:18px;
+            font-weight:700;
+            color:#1a3a4a;
+            margin-bottom:20px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            flex-wrap:wrap;
+            gap:10px;
+        }
+        .panel-title .badge { background:#edf2f7; padding:4px 14px; border-radius:30px; font-size:12px; font-weight:600; color:#2d5a6d; }
+        .filter-bar {
+            display:flex;
+            flex-wrap:wrap;
+            gap:8px;
+            margin-bottom:20px;
+            border-bottom:2px solid #edf2f7;
+            padding-bottom:14px;
+        }
+        .filter-btn {
+            padding:6px 18px;
+            border:none;
+            border-radius:30px;
+            font-size:13px;
+            font-weight:600;
+            cursor:pointer;
+            background:#edf2f7;
+            color:#4a5568;
+            transition:all 0.2s;
+        }
+        .filter-btn:hover { background:#dce4ec; }
+        .filter-btn.active { background:#2d5a6d; color:#fff; }
+        .filter-btn.active-grade { background:#f6c445; color:#1a3a4a; }
+        .subject-grid {
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:16px;
+        }
+        @media (max-width:600px) { .subject-grid { grid-template-columns:1fr; } }
+        .subject-card {
+            border:1px solid #e8edf3;
+            border-radius:12px;
+            padding:16px 18px;
+            transition:all 0.2s;
+            background:#fafcfe;
+        }
+        .subject-card:hover { border-color:#b0c8d8; box-shadow:0 4px 12px rgba(0,0,0,0.05); }
+        .subject-card .subject-name {
+            font-weight:700;
+            font-size:16px;
+            color:#1a3a4a;
+            display:flex;
+            align-items:center;
+            gap:10px;
+        }
+        .subject-card .subject-name i { color:#2d5a6d; font-size:18px; width:26px; }
+        .subject-card .subject-meta {
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-top:10px;
+            font-size:13px;
+            color:#718096;
+        }
+        .subject-card .subject-meta .topic-count { background:#edf2f7; padding:2px 12px; border-radius:30px; font-weight:600; font-size:12px; }
+        .subject-card .actions {
+            margin-top:12px;
+            display:flex;
+            gap:8px;
+            flex-wrap:wrap;
+        }
+        .subject-card .actions button {
+            padding:4px 14px;
+            border:none;
+            border-radius:20px;
+            font-size:12px;
+            font-weight:600;
+            cursor:pointer;
+            transition:all 0.2s;
+            background:#edf2f7;
+            color:#2d5a6d;
+        }
+        .subject-card .actions button:hover { background:#dce4ec; }
+        .subject-card .actions .btn-primary { background:#2d5a6d; color:#fff; }
+        .subject-card .actions .btn-primary:hover { background:#1a3a4a; }
+        .subject-card .actions .btn-warning { background:#f6c445; color:#1a3a4a; }
+        .subject-card .actions .btn-warning:hover { background:#e5b332; }
+        .right-panel .panel { margin-bottom:20px; }
+        .right-panel .panel:last-child { margin-bottom:0; }
+        .topic-list {
+            list-style:none;
+            padding:0;
+            max-height:320px;
+            overflow-y:auto;
+        }
+        .topic-list li {
+            padding:10px 14px;
+            border-bottom:1px solid #edf2f7;
+            display:flex;
+            flex-wrap:wrap;
+            align-items:center;
+            justify-content:space-between;
+            gap:6px;
+            font-size:14px;
+        }
+        .topic-list li:last-child { border-bottom:none; }
+        .topic-list .topic-name { font-weight:500; flex:1; }
+        .topic-list .file-link {
+            font-size:12px;
+            color:#2d5a6d;
+            text-decoration:none;
+            background:#edf2f7;
+            padding:2px 10px;
+            border-radius:20px;
+            display:inline-flex;
+            align-items:center;
+            gap:4px;
+            white-space:nowrap;
+        }
+        .topic-list .file-link:hover { background:#dce4ec; }
+        .topic-list .topic-delete {
+            color:#e53e3e;
+            background:none;
+            border:none;
+            cursor:pointer;
+            font-size:14px;
+            padding:4px 8px;
+            border-radius:6px;
+            transition:background 0.2s;
+        }
+        .topic-list .topic-delete:hover { background:#fed7d7; }
+        .form-group { margin-bottom:14px; }
+        .form-group label {
+            display:block;
+            font-size:13px;
+            font-weight:600;
+            color:#2d3748;
+            margin-bottom:4px;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width:100%;
+            padding:10px 14px;
+            border:1px solid #dce4ec;
+            border-radius:8px;
+            font-size:14px;
+            font-family:inherit;
+            transition:border 0.2s;
+            background:#fafcfe;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline:none;
+            border-color:#2d5a6d;
+            box-shadow:0 0 0 3px rgba(45,90,109,0.12);
+        }
+        .form-group input[type="file"] { padding:8px; }
+        .form-group textarea { resize:vertical; min-height:60px; }
+        .form-row {
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:14px;
+        }
+        @media (max-width:500px) { .form-row { grid-template-columns:1fr; } }
+        .btn-submit {
+            background:#2d5a6d;
+            color:#fff;
+            border:none;
+            padding:10px 24px;
+            border-radius:8px;
+            font-weight:600;
+            font-size:14px;
+            cursor:pointer;
+            transition:background 0.2s;
+            width:100%;
+        }
+        .btn-submit:hover { background:#1a3a4a; }
+        .btn-submit i { margin-right:8px; }
+        .exam-form-area { margin-top:16px; padding-top:16px; border-top:2px dashed #e2e8f0; }
+        .exam-form-area .form-group textarea { min-height:80px; }
+        .exam-questions { margin-top:14px; }
+        .exam-question-item {
+            background:#f7fafc;
+            padding:12px 16px;
+            border-radius:8px;
+            margin-bottom:8px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            font-size:14px;
+            border-left:3px solid #2d5a6d;
+        }
+        .exam-question-item .q-text { flex:1; margin-right:12px; }
+        .exam-question-item .q-del { color:#e53e3e; background:none; border:none; cursor:pointer; font-size:14px; padding:4px 8px; }
+        .empty-state { text-align:center; color:#a0aec0; padding:24px 0; font-size:14px; }
+        .empty-state i { font-size:32px; display:block; margin-bottom:8px; opacity:0.4; }
+        .toast {
+            position:fixed;
+            bottom:30px;
+            right:30px;
+            background:#1a3a4a;
+            color:#fff;
+            padding:14px 28px;
+            border-radius:12px;
+            font-weight:500;
+            box-shadow:0 8px 24px rgba(0,0,0,0.2);
+            transform:translateY(80px);
+            opacity:0;
+            transition:all 0.4s ease;
+            z-index:999;
+        }
+        .toast.show { transform:translateY(0); opacity:1; }
+        .toast i { margin-right:10px; color:#f6c445; }
+        @media (max-width:768px) {
+            .header { padding:18px 20px; }
+            .header h1 { font-size:20px; }
+            .panel { padding:16px; }
+            .subject-grid { grid-template-columns:1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header class="header">
+        <div>
+            <h1><i class="fas fa-mosque"></i> Diniyah Course Manager</h1>
+            <div class="subtitle">Kurikulum KMA 183 · Kelas 1–6 · 6 Mata Pelajaran + Referensi</div>
+        </div>
+        <div class="header-actions">
+            <button class="btn-reset" id="resetDataBtn"><i class="fas fa-undo-alt"></i> Reset Data</button>
+            <div class="header-badge"><i class="fas fa-calendar-alt"></i><span id="dateDisplay"></span></div>
+        </div>
+    </header>
+
+    <div class="stats" id="statsContainer"></div>
+
+    <div class="main-grid">
+        <div class="left-panel">
+            <div class="panel">
+                <div class="panel-title">
+                    <span><i class="fas fa-book-open" style="margin-right:10px;color:#2d5a6d;"></i> Materi Pelajaran</span>
+                    <span class="badge" id="totalTopicsBadge">0 topik</span>
+                </div>
+                <div class="filter-bar" id="gradeFilter">
+                    <button class="filter-btn active" data-grade="all">Semua</button>
+                    <button class="filter-btn" data-grade="1">Kelas 1</button>
+                    <button class="filter-btn" data-grade="2">Kelas 2</button>
+                    <button class="filter-btn" data-grade="3">Kelas 3</button>
+                    <button class="filter-btn" data-grade="4">Kelas 4</button>
+                    <button class="filter-btn" data-grade="5">Kelas 5</button>
+                    <button class="filter-btn" data-grade="6">Kelas 6</button>
+                </div>
+                <div class="subject-grid" id="subjectGrid"></div>
+            </div>
+            <div class="panel" id="topicDetailPanel" style="display:none;">
+                <div class="panel-title">
+                    <span id="topicDetailTitle"><i class="fas fa-list-ul" style="margin-right:10px;color:#2d5a6d;"></i> Topik</span>
+                    <button class="filter-btn" id="closeTopicDetail" style="background:#e53e3e;color:#fff;">Tutup</button>
+                </div>
+                <ul class="topic-list" id="topicDetailList"></ul>
+                <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
+                    <input type="text" id="newTopicInput" placeholder="Tambah topik baru..." style="flex:1;padding:8px 14px;border:1px solid #dce4ec;border-radius:8px;font-size:13px;">
+                    <button id="addTopicBtn" class="btn-submit" style="width:auto;padding:8px 20px;">Tambah</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="panel">
+                <div class="panel-title">
+                    <span><i class="fas fa-plus-circle" style="margin-right:10px;color:#2d5a6d;"></i> Tambah Materi</span>
+                </div>
+                <form id="addMaterialForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="matKelas">Kelas</label>
+                            <select id="matKelas" required>
+                                <option value="1">Kelas 1</option><option value="2">Kelas 2</option>
+                                <option value="3">Kelas 3</option><option value="4">Kelas 4</option>
+                                <option value="5">Kelas 5</option><option value="6">Kelas 6</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="matMapel">Mata Pelajaran</label>
+                            <select id="matMapel" required>
+                                <option value="Alquran">Al-Qur'an</option>
+                                <option value="Hadist">Hadist</option>
+                                <option value="Fiqih">Fiqih</option>
+                                <option value="Akidah Akhlak">Akidah Akhlak</option>
+                                <option value="Bahasa Arab">Bahasa Arab</option>
+                                <option value="SKI">SKI</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="matTopik">Topik / Materi</label>
+                        <input type="text" id="matTopik" placeholder="Contoh: Surat Al-Fatihah, Rukun Iman, dll." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="matDeskripsi">Deskripsi (opsional)</label>
+                        <textarea id="matDeskripsi" placeholder="Deskripsi singkat materi..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="matFile">File Referensi (opsional, maks 2 MB)</label>
+                        <input type="file" id="matFile" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif,.txt,.xls,.xlsx">
+                    </div>
+                    <button type="submit" class="btn-submit"><i class="fas fa-save"></i> Simpan Materi</button>
+                </form>
+            </div>
+
+            <div class="panel">
+                <div class="panel-title">
+                    <span><i class="fas fa-pencil-alt" style="margin-right:10px;color:#f6c445;"></i> Buat Ujian</span>
+                </div>
+                <form id="examForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="examKelas">Kelas</label>
+                            <select id="examKelas" required>
+                                <option value="1">Kelas 1</option><option value="2">Kelas 2</option>
+                                <option value="3">Kelas 3</option><option value="4">Kelas 4</option>
+                                <option value="5">Kelas 5</option><option value="6">Kelas 6</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="examMapel">Mata Pelajaran</label>
+                            <select id="examMapel" required>
+                                <option value="Alquran">Al-Qur'an</option>
+                                <option value="Hadist">Hadist</option>
+                                <option value="Fiqih">Fiqih</option>
+                                <option value="Akidah Akhlak">Akidah Akhlak</option>
+                                <option value="Bahasa Arab">Bahasa Arab</option>
+                                <option value="SKI">SKI</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="examQuestion">Tambah Pertanyaan</label>
+                        <div style="display:flex;gap:10px;">
+                            <input type="text" id="examQuestion" placeholder="Tulis pertanyaan ujian..." style="flex:1;padding:10px 14px;border:1px solid #dce4ec;border-radius:8px;font-size:14px;">
+                            <button type="button" id="addExamQuestionBtn" class="btn-submit" style="width:auto;padding:10px 20px;">Tambah</button>
+                        </div>
+                    </div>
+                    <div class="exam-questions" id="examQuestionsList"></div>
+                    <button type="submit" class="btn-submit" style="margin-top:10px;background:#f6c445;color:#1a3a4a;"><i class="fas fa-file-pdf"></i> Generate Ujian</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"><i class="fas fa-check-circle"></i> <span id="toastMsg">Berhasil</span></div>
+
+<script>
+    // ===== DATA =====
+    const mapelList = ['Alquran', 'Hadist', 'Fiqih', 'Akidah Akhlak', 'Bahasa Arab', 'SKI'];
+    const iconMap = {
+        'Alquran':'fa-quran', 'Hadist':'fa-hadith', 'Fiqih':'fa-gavel',
+        'Akidah Akhlak':'fa-hand-holding-heart', 'Bahasa Arab':'fa-language', 'SKI':'fa-landmark'
+    };
+
+    let topicsData = {};   // { grade: { mapel: [ {topic, desc, fileName, fileData}, ... ] } }
+    let examQuestions = {}; // { grade: { mapel: [ 'q1', ... ] } }
+
+    // ===== LOCAL STORAGE =====
+    function loadData() {
+        try {
+            const t = localStorage.getItem('diniyah_topics');
+            if (t) topicsData = JSON.parse(t);
+            const e = localStorage.getItem('diniyah_exams');
+            if (e) examQuestions = JSON.parse(e);
+        } catch(err) { console.warn('Gagal load data', err); }
+    }
+    function saveData() {
+        localStorage.setItem('diniyah_topics', JSON.stringify(topicsData));
+        localStorage.setItem('diniyah_exams', JSON.stringify(examQuestions));
+    }
+
+    // ===== SEED DATA =====
+    function seedData() {
+        const seed = {
+            1: {
+                'Alquran': [
+                    { topic: 'Huruf Hijaiyah & Harakat', desc: 'Pengenalan huruf hijaiyah dan tanda baca' },
+                    { topic: 'Surat Al-Fatihah', desc: 'Hafalan dan arti surat Al-Fatihah' },
+                    { topic: 'Surat An-Nas', desc: 'Hafalan surat An-Nas' },
+                    { topic: 'Surat Al-Ikhlas', desc: 'Hafalan surat Al-Ikhlas' }
+                ],
+                'Hadist': [ { topic: 'Hadist tentang Kebersihan', desc: 'Kebersihan sebagian dari iman' }, { topic: 'Hadist tentang Salam', desc: 'Menyebarkan salam' } ],
+                'Fiqih': [ { topic: 'Pengertian Fiqih', desc: 'Dasar-dasar fiqih' }, { topic: 'Rukun Islam', desc: 'Lima rukun Islam' }, { topic: 'Thaharah (Bersuci)', desc: 'Macam-macam air dan najis' } ],
+                'Akidah Akhlak': [ { topic: 'Dua Kalimat Syahadat', desc: 'Syahadat tauhid dan rasul' }, { topic: 'Kalimat Thayyibah', desc: 'Basmalah dan Hamdalah' }, { topic: 'Asmaul Husna', desc: 'Mengenal nama-nama Allah' } ],
+                'Bahasa Arab': [ { topic: 'Mufrodat (Kosa Kata)', desc: 'Kata benda dasar' }, { topic: 'Pengenalan Mudzakkar & Muannats', desc: 'Kata maskulin dan feminin' } ],
+                'SKI': [ { topic: 'Pengenalan Nabi Muhammad', desc: 'Kelahiran dan masa kecil Nabi' } ]
+            },
+            2: {
+                'Alquran': [ { topic: 'Surat Al-Falaq', desc: 'Hafalan surat Al-Falaq' }, { topic: 'Surat Al-Ma\'un', desc: 'Hafalan dan arti' }, { topic: 'Hukum Tajwid Dasar', desc: 'Pengenalan nun sukun dan tanwin' } ],
+                'Hadist': [ { topic: 'Hadist tentang Akhlak', desc: 'Hadist tentang senyum sedekah' }, { topic: 'Hadist tentang Jujur', desc: 'Keutamaan jujur' } ],
+                'Fiqih': [ { topic: 'Wudhu', desc: 'Rukun dan sunnah wudhu' }, { topic: 'Tayamum', desc: 'Pengganti wudhu' }, { topic: 'Shalat Fardhu', desc: 'Waktu dan jumlah rakaat' } ],
+                'Akidah Akhlak': [ { topic: 'Rukun Iman', desc: 'Enam rukun iman' }, { topic: 'Asmaul Husna (Al-Quddus, As-Salam)', desc: 'Makna dan hikmah' }, { topic: 'Adab Kepada Orang Tua', desc: 'Birrul walidain' } ],
+                'Bahasa Arab': [ { topic: 'Kata Ganti (Dhomir)', desc: 'Dhomir muttashil dan munfashil' }, { topic: 'Isim Isyarah', desc: 'Kata tunjuk' } ],
+                'SKI': [ { topic: 'Masa Kenabian', desc: 'Periode Mekkah dan Madinah' } ]
+            },
+            3: {
+                'Alquran': [ { topic: 'Surat At-Tin', desc: 'Hafalan dan tafsir sederhana' }, { topic: 'Surat Al-Ashr', desc: 'Hafalan dan kandungan' }, { topic: 'Hukum Mim Sukun', desc: 'Idgham, ikhfa, izhar' } ],
+                'Hadist': [ { topic: 'Hadist Arbain ke-1', desc: 'Hadist tentang niat' }, { topic: 'Hadist tentang Tetangga', desc: 'Hak tetangga' } ],
+                'Fiqih': [ { topic: 'Shalat Berjamaah', desc: 'Keutamaan dan tata cara' }, { topic: 'Puasa Ramadhan', desc: 'Rukun dan sunnah puasa' }, { topic: 'Zakat Fitrah', desc: 'Ketentuan zakat fitrah' } ],
+                'Akidah Akhlak': [ { topic: 'Iman kepada Malaikat', desc: 'Nama dan tugas malaikat' }, { topic: 'Asmaul Husna (Al-Wahhab, Ar-Razzaq)', desc: 'Makna dan contoh' }, { topic: 'Akhlak Terpuji (Sabar, Syukur)', desc: 'Contoh dalam kehidupan' } ],
+                'Bahasa Arab': [ { topic: 'Fi\'il Madhi', desc: 'Kata kerja lampau' }, { topic: 'Jumlah Ismiyah', desc: 'Kalimat nominal' } ],
+                'SKI': [ { topic: 'Peristiwa Isra\' Mi\'raj', desc: 'Sejarah dan hikmah' }, { topic: 'Khulafaur Rasyidin (Abu Bakar)', desc: 'Masa kepemimpinan' } ]
+            },
+            4: {
+                'Alquran': [ { topic: 'Surat Al-Humazah', desc: 'Hafalan dan tafsir' }, { topic: 'Surat Al-Adiyat', desc: 'Hafalan dan kandungan' }, { topic: 'Gharib & Musykilat', desc: 'Kata-kata sulit dalam Al-Qur\'an' } ],
+                'Hadist': [ { topic: 'Hadist Arbain ke-2', desc: 'Hadist tentang Islam, Iman, Ihsan' }, { topic: 'Hadist tentang Silaturahmi', desc: 'Keutamaan silaturahmi' } ],
+                'Fiqih': [ { topic: 'Shalat Sunnah', desc: 'Rawatib, Dhuha, Tahajud' }, { topic: 'Haji dan Umrah', desc: 'Pengenalan rukun haji' }, { topic: 'Makanan Halal dan Haram', desc: 'Ketentuan dasar' } ],
+                'Akidah Akhlak': [ { topic: 'Iman kepada Kitab-Kitab Allah', desc: 'Kitab yang diturunkan' }, { topic: 'Asmaul Husna (Al-Malik, Al-Qayyum)', desc: 'Makna dan implementasi' }, { topic: 'Menghindari Akhlak Tercela', desc: 'Dengki, hasad, dan ghibah' } ],
+                'Bahasa Arab': [ { topic: 'Fi\'il Mudhari\'', desc: 'Kata kerja sekarang/akan datang' }, { topic: 'Jumlah Fi\'liyah', desc: 'Kalimat verbal' } ],
+                'SKI': [ { topic: 'Khulafaur Rasyidin (Umar, Utsman, Ali)', desc: 'Periodisasi kepemimpinan' }, { topic: 'Perkembangan Islam di Andalusia', desc: 'Pengenalan' } ]
+            },
+            5: {
+                'Alquran': [ { topic: 'Surat Al-Qari\'ah', desc: 'Hafalan dan tafsir' }, { topic: 'Surat At-Takatsur', desc: 'Hafalan dan kandungan' }, { topic: 'Tajwid Lanjutan', desc: 'Hukum lam jalalah dan ra\' ' } ],
+                'Hadist': [ { topic: 'Hadist tentang Ilmu', desc: 'Menuntut ilmu wajib' }, { topic: 'Hadist tentang Amal', desc: 'Amal tergantung niat' } ],
+                'Fiqih': [ { topic: 'Shalat Jumat', desc: 'Hukum dan tata cara' }, { topic: 'Shalat Jenazah', desc: 'Tata cara dan doa' }, { topic: 'Zakat Mal', desc: 'Ketentuan zakat harta' } ],
+                'Akidah Akhlak': [ { topic: 'Iman kepada Rasul-Rasul Allah', desc: 'Nama 25 rasul' }, { topic: 'Asmaul Husna (Al-Khaliq, Al-Bari\')', desc: 'Makna dan hikmah' }, { topic: 'Akhlak dalam Bermasyarakat', desc: 'Toleransi dan ukhuwah' } ],
+                'Bahasa Arab': [ { topic: 'Fi\'il Amar', desc: 'Kata kerja perintah' }, { topic: 'Maf\'ul Bih', desc: 'Objek dalam kalimat' } ],
+                'SKI': [ { topic: 'Dinasti Umayyah', desc: 'Sejarah dan tokoh' }, { topic: 'Dinasti Abbasiyah', desc: 'Kejayaan peradaban' } ]
+            },
+            6: {
+                'Alquran': [ { topic: 'Surat Al-Muthaffifin', desc: 'Hafalan dan tafsir' }, { topic: 'Surat Al-Infithar', desc: 'Hafalan dan kandungan' }, { topic: 'Tafsir Tematik', desc: 'Pendekatan tafsir' } ],
+                'Hadist': [ { topic: 'Hadist tentang Taqwa', desc: 'Taqwa adalah bekal' }, { topic: 'Hadist tentang Akhir Zaman', desc: 'Tanda-tanda kiamat' } ],
+                'Fiqih': [ { topic: 'Muamalah Dasar', desc: 'Jual-beli dan riba' }, { topic: 'Pernikahan dalam Islam', desc: 'Rukun dan syarat' }, { topic: 'Waris (Faraidh)', desc: 'Dasar-dasar pembagian waris' } ],
+                'Akidah Akhlak': [ { topic: 'Iman kepada Hari Akhir', desc: 'Tanda dan proses kiamat' }, { topic: 'Iman kepada Qada dan Qadar', desc: 'Takdir baik dan buruk' }, { topic: 'Akhlak kepada Lingkungan', desc: 'Menjaga alam' } ],
+                'Bahasa Arab': [ { topic: 'Isim Tafdhil', desc: 'Kata perbandingan' }, { topic: 'Mabni dan Mu\'rab', desc: 'Kata yang tetap dan berubah' } ],
+                'SKI': [ { topic: 'Perkembangan Islam di Indonesia', desc: 'Sejarah masuknya Islam' }, { topic: 'Tokoh-tokoh Islam Nusantara', desc: 'Wali Songo' } ]
+            }
+        };
+
+        // Merge tanpa overwrite data existing
+        for (let g in seed) {
+            if (!topicsData[g]) topicsData[g] = {};
+            for (let m in seed[g]) {
+                if (!topicsData[g][m]) topicsData[g][m] = [];
+                for (let item of seed[g][m]) {
+                    const exists = topicsData[g][m].some(t => t.topic === item.topic);
+                    if (!exists) {
+                        topicsData[g][m].push({ ...item, fileName: '', fileData: '' });
+                    }
+                }
+            }
+        }
+
+        // Inisialisasi examQuestions
+        for (let g = 1; g <= 6; g++) {
+            if (!examQuestions[g]) examQuestions[g] = {};
+            for (let m of mapelList) {
+                if (!examQuestions[g][m]) examQuestions[g][m] = [];
+            }
+        }
+        saveData();
+    }
+
+    // ===== RENDER =====
+    function renderStats() {
+        let totalTopics = 0, totalSubjects = 0;
+        for (let g in topicsData) {
+            for (let m in topicsData[g]) {
+                totalTopics += topicsData[g][m].length;
+                totalSubjects++;
+            }
+        }
+        let examCount = 0;
+        for (let g in examQuestions) {
+            for (let m in examQuestions[g]) {
+                examCount += examQuestions[g][m].length;
+            }
+        }
+        document.getElementById('statsContainer').innerHTML = `
+            <div class="stat-card"><div class="icon"><i class="fas fa-book"></i></div><div class="info"><div class="number">${totalTopics}</div><div class="label">Total Topik</div></div></div>
+            <div class="stat-card"><div class="icon"><i class="fas fa-layer-group"></i></div><div class="info"><div class="number">${totalSubjects}</div><div class="label">Materi Terisi</div></div></div>
+            <div class="stat-card"><div class="icon"><i class="fas fa-users"></i></div><div class="info"><div class="number">6</div><div class="label">Kelas</div></div></div>
+            <div class="stat-card"><div class="icon"><i class="fas fa-pencil-alt"></i></div><div class="info"><div class="number">${examCount}</div><div class="label">Soal Ujian</div></div></div>
+        `;
+    }
+
+    let currentGradeFilter = 'all';
+    let selectedSubjectForDetail = null;
+
+    function renderSubjects() {
+        const grid = document.getElementById('subjectGrid');
+        grid.innerHTML = '';
+        let showMapel = [];
+        if (currentGradeFilter === 'all') {
+            showMapel = mapelList;
+        } else {
+            const g = currentGradeFilter;
+            for (let m of mapelList) {
+                if (topicsData[g] && topicsData[g][m] && topicsData[g][m].length > 0) {
+                    showMapel.push(m);
+                }
+            }
+            if (showMapel.length === 0) showMapel = mapelList;
+        }
+
+        for (let m of showMapel) {
+            let count = 0;
+            if (currentGradeFilter === 'all') {
+                for (let g=1; g<=6; g++) {
+                    if (topicsData[g] && topicsData[g][m]) count += topicsData[g][m].length;
+                }
+            } else {
+                if (topicsData[currentGradeFilter] && topicsData[currentGradeFilter][m]) {
+                    count = topicsData[currentGradeFilter][m].length;
+                }
+            }
+            const icon = iconMap[m] || 'fa-book';
+            const card = document.createElement('div');
+            card.className = 'subject-card';
+            card.innerHTML = `
+                <div class="subject-name"><i class="fas ${icon}"></i> ${m}</div>
+                <div class="subject-meta">
+                    <span>${currentGradeFilter === 'all' ? 'Semua kelas' : 'Kelas ' + currentGradeFilter}</span>
+                    <span class="topic-count">${count} topik</span>
+                </div>
+                <div class="actions">
+                    <button class="btn-primary view-topic-btn" data-mapel="${m}"><i class="fas fa-eye"></i> Lihat</button>
+                    <button class="btn-warning exam-btn" data-mapel="${m}"><i class="fas fa-pencil-alt"></i> Ujian</button>
+                </div>
+            `;
+            grid.appendChild(card);
+
+            card.querySelector('.view-topic-btn').addEventListener('click', function(e) {
+                e.stopPropagation();
+                const mapel = this.dataset.mapel;
+                let targetGrade = 1;
+                if (currentGradeFilter !== 'all') {
+                    targetGrade = parseInt(currentGradeFilter);
+                } else {
+                    for (let g=1; g<=6; g++) {
+                        if (topicsData[g] && topicsData[g][mapel] && topicsData[g][mapel].length > 0) {
+                            targetGrade = g; break;
+                        }
+                    }
+                }
+                showTopicDetail(targetGrade, mapel);
+            });
+
+            card.querySelector('.exam-btn').addEventListener('click', function(e) {
+                e.stopPropagation();
+                const mapel = this.dataset.mapel;
+                const grade = currentGradeFilter === 'all' ? 1 : parseInt(currentGradeFilter);
+                document.getElementById('examKelas').value = grade;
+                document.getElementById('examMapel').value = mapel;
+                document.getElementById('examForm').scrollIntoView({ behavior: 'smooth' });
+                renderExamQuestions();
+                showToast('Form ujian siap untuk ' + mapel + ' Kelas ' + grade);
+            });
+        }
+
+        let total = 0;
+        for (let g in topicsData) for (let m in topicsData[g]) total += topicsData[g][m].length;
+        document.getElementById('totalTopicsBadge').textContent = total + ' topik';
+    }
+
+    function showTopicDetail(grade, mapel) {
+        selectedSubjectForDetail = { grade, mapel };
+        const panel = document.getElementById('topicDetailPanel');
+        panel.style.display = 'block';
+        document.getElementById('topicDetailTitle').innerHTML =
+            `<i class="fas fa-list-ul" style="margin-right:10px;color:#2d5a6d;"></i> Kelas ${grade} · ${mapel}`;
+        const list = document.getElementById('topicDetailList');
+        list.innerHTML = '';
+        const topics = (topicsData[grade] && topicsData[grade][mapel]) ? topicsData[grade][mapel] : [];
+        if (topics.length === 0) {
+            list.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i>Belum ada topik</div>';
+        } else {
+            for (let i=0; i<topics.length; i++) {
+                const t = topics[i];
+                const li = document.createElement('li');
+                let fileHtml = '';
+                if (t.fileData) {
+                    fileHtml = `<a href="${t.fileData}" download="${t.fileName || 'file'}" class="file-link"><i class="fas fa-file-download"></i> ${t.fileName || 'unduh'}</a>`;
+                }
+                li.innerHTML = `
+                    <span class="topic-name">${t.topic} ${t.desc ? '<span style="color:#718096;font-size:12px;">— ' + t.desc + '</span>' : ''}</span>
+                    ${fileHtml}
+                    <button class="topic-delete" data-index="${i}"><i class="fas fa-trash"></i></button>
+                `;
+                list.appendChild(li);
+                li.querySelector('.topic-delete').addEventListener('click', function() {
+                    const idx = parseInt(this.dataset.index);
+                    topicsData[grade][mapel].splice(idx, 1);
+                    if (topicsData[grade][mapel].length === 0) {
+                        delete topicsData[grade][mapel];
+                    }
+                    saveData();
+                    renderAll();
+                    showTopicDetail(grade, mapel);
+                    showToast('Topik dihapus');
+                });
+            }
+        }
+
+        document.getElementById('newTopicInput').value = '';
+        document.getElementById('newTopicInput').placeholder = `Tambah topik untuk ${mapel} Kelas ${grade}...`;
+
+        const addBtn = document.getElementById('addTopicBtn');
+        const input = document.getElementById('newTopicInput');
+        const newAddBtn = addBtn.cloneNode(true);
+        addBtn.parentNode.replaceChild(newAddBtn, addBtn);
+        const newInput = input.cloneNode(true);
+        input.parentNode.replaceChild(newInput, input);
+
+        newAddBtn.addEventListener('click', function() {
+            const val = newInput.value.trim();
+            if (!val) { showToast('Masukkan topik'); return; }
+            if (!topicsData[grade]) topicsData[grade] = {};
+            if (!topicsData[grade][mapel]) topicsData[grade][mapel] = [];
+            const exists = topicsData[grade][mapel].some(t => t.topic.toLowerCase() === val.toLowerCase());
+            if (exists) { showToast('Topik sudah ada'); return; }
+            topicsData[grade][mapel].push({ topic: val, desc: '', fileName: '', fileData: '' });
+            saveData();
+            renderAll();
+            showTopicDetail(grade, mapel);
+            showToast('Topik berhasil ditambahkan');
+        });
+        newInput.addEventListener('keypress', function(e) { if (e.key === 'Enter') newAddBtn.click(); });
+
+        document.getElementById('closeTopicDetail').addEventListener('click', function() {
+            document.getElementById('topicDetailPanel').style.display = 'none';
+            selectedSubjectForDetail = null;
+        });
+    }
+
+    function renderExamQuestions() {
+        const container = document.getElementById('examQuestionsList');
+        const grade = parseInt(document.getElementById('examKelas').value);
+        const mapel = document.getElementById('examMapel').value;
+        const questions = (examQuestions[grade] && examQuestions[grade][mapel]) ? examQuestions[grade][mapel] : [];
+        if (questions.length === 0) {
+            container.innerHTML = '<div class="empty-state" style="padding:12px 0;"><i class="fas fa-plus-circle" style="font-size:20px;"></i>Belum ada pertanyaan</div>';
+            return;
+        }
+        container.innerHTML = '';
+        for (let i=0; i<questions.length; i++) {
+            const div = document.createElement('div');
+            div.className = 'exam-question-item';
+            div.innerHTML = `<span class="q-text">${i+1}. ${questions[i]}</span><button class="q-del" data-index="${i}"><i class="fas fa-times"></i></button>`;
+            container.appendChild(div);
+            div.querySelector('.q-del').addEventListener('click', function() {
+                const idx = parseInt(this.dataset.index);
+                examQuestions[grade][mapel].splice(idx, 1);
+                saveData();
+                renderExamQuestions();
+                renderStats();
+                showToast('Pertanyaan dihapus');
+            });
+        }
+    }
+
+    function renderAll() {
+        renderStats();
+        renderSubjects();
+        renderExamQuestions();
+        if (selectedSubjectForDetail) {
+            const { grade, mapel } = selectedSubjectForDetail;
+            if (topicsData[grade] && topicsData[grade][mapel]) {
+                showTopicDetail(grade, mapel);
+            } else {
+                document.getElementById('topicDetailPanel').style.display = 'none';
+                selectedSubjectForDetail = null;
+            }
+        }
+    }
+
+    // ===== EVENT LISTENERS =====
+
+    // Filter
+    document.querySelectorAll('#gradeFilter .filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('#gradeFilter .filter-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            currentGradeFilter = this.dataset.grade;
+            document.getElementById('topicDetailPanel').style.display = 'none';
+            selectedSubjectForDetail = null;
+            renderSubjects();
+        });
+    });
+
+    // Tambah Materi (dengan upload file)
+    document.getElementById('addMaterialForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const grade = parseInt(document.getElementById('matKelas').value);
+        const mapel = document.getElementById('matMapel').value;
+        const topic = document.getElementById('matTopik').value.trim();
+        const desc = document.getElementById('matDeskripsi').value.trim();
+        const fileInput = document.getElementById('matFile');
+        const file = fileInput.files[0];
+
+        if (!topic) { showToast('Topik tidak boleh kosong'); return; }
+        if (!topicsData[grade]) topicsData[grade] = {};
+        if (!topicsData[grade][mapel]) topicsData[grade][mapel] = [];
+        const exists = topicsData[grade][mapel].some(t => t.topic.toLowerCase() === topic.toLowerCase());
+        if (exists) { showToast('Topik sudah ada di kelas ini'); return; }
+
+        let fileName = '', fileData = '';
+        if (file) {
+            if (file.size > 2 * 1024 * 1024) {
+                showToast('Ukuran file terlalu besar (maks 2 MB)');
+                return;
+            }
+            fileName = file.name;
+            try {
+                const data = await readFileAsBase64(file);
+                fileData = data;
+            } catch(err) {
+                showToast('Gagal membaca file');
+                return;
+            }
+        }
+
+        topicsData[grade][mapel].push({ topic, desc, fileName, fileData });
+        saveData();
+        this.reset();
+        document.getElementById('matTopik').value = '';
+        document.getElementById('matDeskripsi').value = '';
+        document.getElementById('matFile').value = '';
+        renderAll();
+        showToast(`Materi "${topic}" berhasil ditambahkan${file ? ' dengan file' : ''}`);
+    });
+
+    function readFileAsBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // Tambah pertanyaan ujian
+    document.getElementById('addExamQuestionBtn').addEventListener('click', function() {
+        const grade = parseInt(document.getElementById('examKelas').value);
+        const mapel = document.getElementById('examMapel').value;
+        const q = document.getElementById('examQuestion').value.trim();
+        if (!q) { showToast('Masukkan pertanyaan'); return; }
+        if (!examQuestions[grade]) examQuestions[grade] = {};
+        if (!examQuestions[grade][mapel]) examQuestions[grade][mapel] = [];
+        examQuestions[grade][mapel].push(q);
+        document.getElementById('examQuestion').value = '';
+        saveData();
+        renderExamQuestions();
+        renderStats();
+        showToast('Pertanyaan ditambahkan');
+    });
+    document.getElementById('examQuestion').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') { e.preventDefault(); document.getElementById('addExamQuestionBtn').click(); }
+    });
+
+    // Generate ujian
+    document.getElementById('examForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const grade = parseInt(document.getElementById('examKelas').value);
+        const mapel = document.getElementById('examMapel').value;
+        const questions = (examQuestions[grade] && examQuestions[grade][mapel]) ? examQuestions[grade][mapel] : [];
+        if (questions.length === 0) { showToast('Tambahkan minimal 1 pertanyaan'); return; }
+        let output = `=== UJIAN DINIYAH ===\nKelas: ${grade}\nMata Pelajaran: ${mapel}\n========================\n\nPetunjuk: Jawablah pertanyaan berikut dengan benar!\n\n`;
+        for (let i=0; i<questions.length; i++) {
+            output += `${i+1}. ${questions[i]}\n\n`;
+        }
+        output += `\n--- Selamat Mengerjakan ---`;
+        const blob = new Blob([output], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Ujian_Kelas${grade}_${mapel}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast(`Ujian ${mapel} Kelas ${grade} berhasil di-generate (${questions.length} soal)`);
+    });
+
+    // Reset data
+    document.getElementById('resetDataBtn').addEventListener('click', function() {
+        if (confirm('Reset semua data ke contoh awal? Data tambahan Anda akan hilang.')) {
+            topicsData = {};
+            examQuestions = {};
+            seedData();
+            renderAll();
+            showToast('Data telah direset ke contoh awal');
+        }
+    });
+
+    // ===== TOAST =====
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        document.getElementById('toastMsg').textContent = msg;
+        toast.classList.add('show');
+        clearTimeout(toast._timer);
+        toast._timer = setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // ===== DATE =====
+    document.getElementById('dateDisplay').textContent = new Date().toLocaleDateString('id-ID', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+
+    // ===== INIT =====
+    loadData();
+    // Jika belum ada data, seed
+    if (Object.keys(topicsData).length === 0) {
+        seedData();
+    }
+    // Pastikan examQuestions terinisialisasi untuk semua grade/mapel
+    for (let g=1; g<=6; g++) {
+        if (!examQuestions[g]) examQuestions[g] = {};
+        for (let m of mapelList) {
+            if (!examQuestions[g][m]) examQuestions[g][m] = [];
+        }
+    }
+    saveData();
+    renderAll();
+    // Default exam form
+    document.getElementById('examKelas').value = 1;
+    document.getElementById('examMapel').value = 'Alquran';
+    renderExamQuestions();
+    console.log('📚 Diniyah Course Manager siap digunakan! (dengan upload file)');
+</script>
+</body>
+</html>
